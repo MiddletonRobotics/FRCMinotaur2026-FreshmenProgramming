@@ -4,7 +4,13 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -13,8 +19,28 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
+  private WPI_TalonSRX frontLeft;
+  private WPI_TalonSRX frontRight;
+  private WPI_TalonSRX backLeft;
+  private WPI_TalonSRX backRight; 
+
+  private DifferentialDrive drivetrain;
+  private XboxController driverController = new XboxController(0);
+
   public Robot() {
     m_robotContainer = new RobotContainer();
+
+    frontLeft = new WPI_TalonSRX(1);
+    frontRight = new WPI_TalonSRX(2);
+    backLeft = new WPI_TalonSRX(3);
+    backRight = new WPI_TalonSRX(4);
+
+    backLeft.setInverted(true);
+
+    backLeft.follow(frontLeft);
+    backRight.follow(frontRight);
+
+    drivetrain = new DifferentialDrive(frontLeft, frontRight);
   }
 
   @Override
@@ -54,7 +80,9 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    drivetrain.arcadeDrive(driverController.getLeftY(), driverController.getRightX());
+  }
 
   @Override
   public void teleopExit() {}
