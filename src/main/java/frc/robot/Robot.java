@@ -7,6 +7,8 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -26,6 +28,11 @@ public class Robot extends TimedRobot {
 
   private DifferentialDrive drivetrain;
   private XboxController driverController = new XboxController(0);
+
+  private double speedMultiplier = 1.0;
+
+  private double a = 1.0;
+  private double b = 2.0;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
@@ -81,7 +88,17 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    drivetrain.arcadeDrive(driverController.getLeftY(), driverController.getRightX());
+    if (driverController.getAButtonPressed()) {
+      speedMultiplier = 0.5;
+    } else if (driverController.getBButtonPressed()) {
+      speedMultiplier = 1.0;
+    }
+
+    double magnitudeX = MathUtil.applyDeadband(driverController.getLeftY(), 0.1);
+    double magnitudeY = MathUtil.applyDeadband(driverController.getRightX(), 0.1);
+
+    //drivetrain.arcadeDrive(driverController.getLeftY() * speedMultiplier, driverController.getRightX() * speedMultiplier);
+    arcadeDrive(magnitudeX, magnitudeY);
   }
 
   @Override
@@ -97,4 +114,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testExit() {}
+
+  public void arcadeDrive(final double xSpeed, final double zSpeed) {
+    drivetrain.arcadeDrive(xSpeed * speedMultiplier, zSpeed * speedMultiplier);
+  }
 }
