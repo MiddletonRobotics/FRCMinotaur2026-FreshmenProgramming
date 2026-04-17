@@ -21,33 +21,8 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
-  private WPI_TalonSRX frontLeft;
-  private WPI_TalonSRX frontRight;
-  private WPI_TalonSRX backLeft;
-  private WPI_TalonSRX backRight; 
-
-  private DifferentialDrive drivetrain;
-  private XboxController driverController = new XboxController(0);
-
-  private double speedMultiplier = 1.0;
-
-  private double a = 1.0;
-  private double b = 2.0;
-
   public Robot() {
     m_robotContainer = new RobotContainer();
-
-    frontLeft = new WPI_TalonSRX(1);
-    frontRight = new WPI_TalonSRX(2);
-    backLeft = new WPI_TalonSRX(3);
-    backRight = new WPI_TalonSRX(4);
-
-    backLeft.setInverted(true);
-
-    backLeft.follow(frontLeft);
-    backRight.follow(frontRight);
-
-    drivetrain = new DifferentialDrive(frontLeft, frontRight);
   }
 
   @Override
@@ -87,19 +62,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {
-    if (driverController.getAButtonPressed()) {
-      speedMultiplier = 0.5;
-    } else if (driverController.getBButtonPressed()) {
-      speedMultiplier = 1.0;
-    }
-
-    double magnitudeX = MathUtil.applyDeadband(driverController.getLeftY(), 0.1);
-    double magnitudeY = MathUtil.applyDeadband(driverController.getRightX(), 0.1);
-
-    //drivetrain.arcadeDrive(driverController.getLeftY() * speedMultiplier, driverController.getRightX() * speedMultiplier);
-    arcadeDrive(magnitudeX, magnitudeY);
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void teleopExit() {}
@@ -114,8 +77,4 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testExit() {}
-
-  public void arcadeDrive(final double xSpeed, final double zSpeed) {
-    drivetrain.arcadeDrive(xSpeed * speedMultiplier, zSpeed * speedMultiplier);
-  }
 }
